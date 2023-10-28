@@ -1,0 +1,1020 @@
+CREATE TABLE bitacora (
+   idbitacora NUMBER NOT NULL,
+   tabla VARCHAR2(30) NOT NULL,
+   campo VARCHAR2(30) NOT NULL,
+   llaveprimaria VARCHAR2(30) NOT NULL,
+   valoranterior VARCHAR2(255),
+   valornuevo VARCHAR2(255),
+   fechacreacion DATE NOT NULL,
+   usuariocreacion VARCHAR2(50) NOT NULL,
+   tipomovimiento VARCHAR2(40) NOT NULL,
+   ipregistro VARCHAR2(50) NOT NULL,
+   CONSTRAINT PK_BITACORA PRIMARY KEY (idbitacora)
+);
+
+
+-- Definici�n de la tabla persona
+CREATE TABLE persona (
+   codigopersona NUMBER(10) NOT NULL,
+   primernombre VARCHAR2(50) NOT NULL,
+   segundonombre VARCHAR2(50),
+   tercernombre VARCHAR2(50),
+   primerapellido VARCHAR2(50) NOT NULL,
+   segundoapellido VARCHAR2(50),
+   apellidocasada VARCHAR2(50),
+   numdocidentificacion NUMBER(10) NOT NULL,
+   nit NUMBER(10) NOT NULL,
+   dpi NUMBER(10) NOT NULL,
+   numerotelefono NUMBER(10) NOT NULL,
+   fechanacimiento DATE,
+   correo VARCHAR2(100),
+   direccion VARCHAR2(100),
+   departamento VARCHAR2(100),
+   nombrepais VARCHAR2(50) NOT NULL,
+   CONSTRAINT PK_persona PRIMARY KEY (codigopersona)
+);
+
+
+
+-- Definici�n de la tabla cliente con relaci�n muchos a uno a la tabla persona
+CREATE TABLE cliente (
+   codigocliente NUMBER(10) NOT NULL,
+   fecharegistro DATE NOT NULL,
+   codigopersona NUMBER(10) NOT NULL,
+   CONSTRAINT PK_CLIENTE PRIMARY KEY (codigocliente),
+   CONSTRAINT FK_PERSONA FOREIGN KEY (codigopersona) REFERENCES persona(codigopersona)
+);
+
+-- Definici�n de la tabla empleado con relaci�n a la tabla persona
+CREATE TABLE empleado (
+   codigoempleado NUMBER(10) NOT NULL,
+   fechaingreso DATE NOT NULL,
+   salariobase NUMBER(10, 2) NOT NULL,
+   fechaegreso DATE,
+   codigopersona NUMBER(10) NOT NULL,
+   CONSTRAINT PK_EMPLEADO PRIMARY KEY (codigoempleado),
+   CONSTRAINT FK_EMPLEADO_PERSONA FOREIGN KEY (codigopersona) REFERENCES persona(codigopersona)
+);
+
+
+
+CREATE TABLE detallefactura (
+   codigodetalle NUMBER(10) NOT NULL,
+   producto VARCHAR2(45) NOT NULL,
+   cantidad NUMBER(10) NOT NULL,
+   preciounitario NUMBER(10, 2) NOT NULL,
+   impuestos NUMBER(10, 2) NOT NULL,
+   subtotal NUMBER(10, 2) NOT NULL,
+   comprobante NUMBER(10) NOT NULL,
+   CONSTRAINT PK_detallefactura PRIMARY KEY (codigodetalle),
+   CONSTRAINT FK_DetalleFactura_Factura FOREIGN KEY (comprobante) REFERENCES factura(codigofactura)
+);
+
+
+
+-- Definici�n de la tabla estadofactura
+CREATE TABLE estadofactura (
+   idestadofactura NUMBER(10) NOT NULL,
+   estatus VARCHAR2(50) NOT NULL,
+   CONSTRAINT PK_ESTADOFACTURA PRIMARY KEY (idestadofactura)
+);
+
+
+-- Definici�n de la tabla medicamento
+CREATE TABLE medicamento (
+   codigomedicamento NUMBER(10) NOT NULL,
+   lote VARCHAR2(30) NOT NULL, 
+   nombrecomercial VARCHAR2(60) NOT NULL, 
+   estado VARCHAR2(20) NOT NULL, 
+   unidaddemedida NUMBER(10) NOT NULL, 
+   proporcion NUMBER(10) NOT NULL,
+   fechacreacion DATE NOT NULL,
+   fechaingreso DATE NOT NULL,
+   fechavencimiento DATE NOT NULL,
+   existencia NUMBER(10) NOT NULL,
+   costoventa NUMBER(10, 2) NOT NULL, 
+   costocompra NUMBER(10, 2) NOT NULL,
+    principioactivo VARCHAR2(20) NOT NULL, 
+   CONSTRAINT PK_MEDICAMENTO PRIMARY KEY (codigomedicamento)
+);
+
+
+-- Definici�n de la tabla metodo de pago
+CREATE TABLE metododepago (
+   codigometodo NUMBER(10) NOT NULL,
+   nombremetodo VARCHAR2(50) NOT NULL,
+   CONSTRAINT PK_METODO_PAGO PRIMARY KEY (codigometodo)
+);
+
+CREATE TABLE usuario (
+   idusuario    NUMBER               NOT NULL,
+   nombreusuario VARCHAR2(50)        NOT NULL,
+   password      VARCHAR2(100)       NOT NULL,
+   rol           VARCHAR2(20)        NOT NULL,
+  CONSTRAINT PK_usuario PRIMARY KEY (idusuario)
+);
+
+insert into usuario(idusuario, nombreusuario, password, rol)
+values (1, 'admin','admin','administrador');
+
+
+CREATE TABLE tipodevolucion (
+   idtipodevolucion NUMBER(10) NOT NULL,
+   descripciontipodevolucion VARCHAR2(100) NOT NULL,
+   CONSTRAINT PK_TIPO_DEVOLUCION PRIMARY KEY (idtipodevolucion)
+);
+
+CREATE TABLE laboratorio (
+   codigolaboratorio NUMBER(10) NOT NULL,
+   nombrelaboratorio VARCHAR2(100) NOT NULL,
+   encargadolaboratorio VARCHAR2(40) NOT NULL,
+   CONSTRAINT PK_LABORATORIO PRIMARY KEY (codigolaboratorio)
+);
+
+
+CREATE TABLE sucursal (
+   codigosucursal NUMBER(10) NOT NULL,
+   fechaapertura DATE,
+   fechacierre DATE,
+   nombresucursal VARCHAR2(50) NOT NULL,
+   departamentosucursal VARCHAR2(50) NOT NULL,
+   CONSTRAINT PK_SUCURSAL PRIMARY KEY (codigosucursal)
+);
+
+
+CREATE TABLE metodopago (
+   codigometodo NUMBER(10) NOT NULL,
+   nombremetodo VARCHAR2(50) NOT NULL,
+   CONSTRAINT PK_METODOPAGO PRIMARY KEY (codigometodo)
+);
+
+
+CREATE TABLE estadoempleado (
+   idestadoempleado NUMBER(10) NOT NULL,
+   estadoempleado VARCHAR2(100) NOT NULL,
+   fecharegistro DATE NOT NULL,
+   fechamodificacion DATE,
+   CONSTRAINT PK_ESTADOEMPLEADO PRIMARY KEY (idestadoempleado)
+);
+
+
+CREATE TABLE estadogarantia (
+   codigogarantia NUMBER(10) NOT NULL,
+   garantia VARCHAR2(50) NOT NULL,
+   CONSTRAINT PK_ESTADO_GARANTIA PRIMARY KEY (codigogarantia)
+);
+
+
+CREATE TABLE producto (
+   codigoproducto NUMBER NOT NULL,
+   nombreproducto VARCHAR2(100) NOT NULL,
+   descripcion VARCHAR2(255) NOT NULL,
+   fechacreacion DATE NOT NULL,
+   codigolaboratorio NUMBER NOT NULL,
+   CONSTRAINT PK_PRODUCTO PRIMARY KEY (codigoproducto)
+);
+
+
+-- Definici�n de la tabla proveedor con relaci�n a persona (uno a muchos)
+CREATE TABLE proveedor (
+   codigoproveedor NUMBER(10) NOT NULL,
+   fechaproveedor DATE NOT NULL,
+   codigopersona NUMBER(10) NOT NULL,
+   CONSTRAINT PK_proveedor PRIMARY KEY (codigoproveedor),
+   CONSTRAINT FK_Proveedor_Persona FOREIGN KEY (codigopersona) REFERENCES persona (codigopersona)
+);
+
+-- Definici�n de la tabla cliente con relaci�n a persona (uno a muchos)
+CREATE TABLE cliente (
+   codigocliente NUMBER(10) NOT NULL,
+   fecharegistro DATE NOT NULL,
+   codigopersona NUMBER(10) NOT NULL,
+   CONSTRAINT PK_CLIENTE PRIMARY KEY (codigocliente),
+   CONSTRAINT FK_Cliente_Persona FOREIGN KEY (codigopersona) REFERENCES persona (codigopersona)
+);
+
+-- Definici�n de la tabla empleado con relaci�n a persona (uno a muchos)
+CREATE TABLE empleado (
+   codigoempleado NUMBER(10) NOT NULL,
+   fechaingreso DATE NOT NULL,
+   salariobase NUMBER(10, 2) NOT NULL,
+   fechaegreso DATE,
+   codigopersona NUMBER(10) NOT NULL,
+   idestadoempleado NUMBER(10) NOT NULL,
+   codigofactura NUMBER(10) NOT NULL,
+   CONSTRAINT PK_EMPLEADO PRIMARY KEY (codigoempleado),
+   CONSTRAINT FK_Empleado_Persona FOREIGN KEY (codigopersona) REFERENCES persona (codigopersona),
+   CONSTRAINT FK_Empleado_EstadoEmpleado FOREIGN KEY (idestadoempleado) REFERENCES estadoempleado (idestadoempleado),
+   CONSTRAINT FK_Empleado_Factura FOREIGN KEY (codigofactura) REFERENCES factura (codigofactura)
+);
+
+-- Definici�n de la tabla factura con relaci�n a detallefactura (uno a muchos)
+CREATE TABLE factura (
+   codigofactura NUMBER(10) NOT NULL,
+   fechaemicion DATE NOT NULL,
+   total NUMBER(10, 2) NOT NULL,
+   descuento NUMBER(10, 2),
+   garantia DATE NOT NULL,
+   idestadofactura NUMBER(10) NOT NULL,
+   codigogarantia NUMBER(10) NOT NULL,
+   codigoentrega NUMBER(10) NOT NULL,
+   codigodevolucion NUMBER(10) NOT NULL,
+   codigomedicamento NUMBER(10) NOT NULL,
+   CONSTRAINT PK_FACTURA PRIMARY KEY (codigofactura),
+   CONSTRAINT FK_Factura_EstadoFactura FOREIGN KEY (idestadofactura) REFERENCES estadofactura (idestadofactura),
+   CONSTRAINT FK_Factura_EstadoGarantia FOREIGN KEY (codigogarantia) REFERENCES estadogarantia (codigogarantia),
+   CONSTRAINT FK_Factura_TipoEntrega FOREIGN KEY (codigoentrega) REFERENCES tipoentrega (codigoentrega),
+   CONSTRAINT FK_Factura_Devoluciones FOREIGN KEY (codigodevolucion) REFERENCES devoluciones (codigodevolucion),
+   CONSTRAINT FK_Factura_Medicamento FOREIGN KEY (codigomedicamento) REFERENCES medicamento (codigomedicamento)
+);
+
+-- Definici�n de la tabla detallefactura con relaci�n a factura (muchos a uno)
+CREATE TABLE detallefactura (
+   codigodetalle NUMBER(10) NOT NULL,
+   producto VARCHAR2(45) NOT NULL,
+   cantidad NUMBER(10) NOT NULL,
+   preciounitario NUMBER(10, 2) NOT NULL,
+   impuestos NUMBER(10, 2) NOT NULL,
+   subtotal NUMBER(10, 2) NOT NULL,
+   comprobante NUMBER(10) NOT NULL,
+   CONSTRAINT PK_DetalleFactura PRIMARY KEY (codigodetalle),
+   CONSTRAINT FK_DetalleFactura_Factura FOREIGN KEY (comprobante) REFERENCES factura (codigofactura)
+);
+
+-- Definici�n de la tabla factura_metodopago para la relaci�n muchos a muchos
+CREATE TABLE factura_metodopago (
+   codigofactura NUMBER(10) NOT NULL,
+   codigometodo NUMBER(10) NOT NULL,
+   CONSTRAINT PK_Factura_MetodoPago PRIMARY KEY (codigofactura, codigometodo),
+   CONSTRAINT FK_Factura_MetodoPago_Factura FOREIGN KEY (codigofactura) REFERENCES factura (codigofactura),
+   CONSTRAINT FK_Factura_MetodoPago_MetodoPago FOREIGN KEY (codigometodo) REFERENCES metodopago (codigometodo)
+);
+
+-- Definici�n de la tabla tipoentrega con relaci�n a tracking (uno a muchos)
+CREATE TABLE tipoentrega (
+   codigoentrega NUMBER(10) NOT NULL,
+   tipoentrega VARCHAR2(50) NOT NULL,
+   CONSTRAINT PK_TIPOENTREGA PRIMARY KEY (codigoentrega)
+);
+
+CREATE TABLE tracking (
+   codigotracking NUMBER(10) NOT NULL,
+   detalletracking VARCHAR2(100) NOT NULL,
+   codigoentrega NUMBER(10) NOT NULL,
+   CONSTRAINT PK_TRACKING PRIMARY KEY (codigotracking),
+   CONSTRAINT FK_Tracking_TipoEntrega FOREIGN KEY (codigoentrega) REFERENCES tipoentrega (codigoentrega)
+);
+
+-- Definici�n de la tabla devoluciones con relaci�n a tipo devolucion (muchos a uno)
+CREATE TABLE devoluciones (
+   codigodevolucion NUMBER(10) NOT NULL,
+   fechadevolucion DATE NOT NULL,
+   cantidadproductos NUMBER(10) NOT NULL,
+   motivodevolucion VARCHAR2(255) NOT NULL,
+   idtipodevolucion NUMBER(10) NOT NULL,
+   CONSTRAINT PK_DEVOLUCIONES PRIMARY KEY (codigodevolucion),
+   CONSTRAINT FK_Devoluciones_TipoDevolucion FOREIGN KEY (idtipodevolucion) REFERENCES tipodevolucion (idtipodevolucion)
+);
+
+-- Definici�n de la tabla inventario con relaci�n a medicamento (uno a muchos)
+CREATE TABLE inventario (
+   codigoinventario NUMBER(10) NOT NULL,
+   fechacreacion DATE NOT NULL,
+   fechaingreso DATE NOT NULL,
+   fechavencimiento DATE NOT NULL,
+   existencia NUMBER(10) NOT NULL,
+   costoventa NUMBER(10, 2) NOT NULL,
+   costocompra NUMBER(10, 2) NOT NULL,
+   codigomedicamento NUMBER(10) NOT NULL,
+   CONSTRAINT PK_INVENTARIO PRIMARY KEY (codigoinventario),
+   CONSTRAINT FK_Inventario_Medicamento FOREIGN KEY (codigomedicamento) REFERENCES medicamento (codigomedicamento)
+);
+
+
+-- Sequence for bitacora
+CREATE SEQUENCE bitacora_seq
+START WITH 1
+INCREMENT BY 1;
+
+-- Sequence for persona
+CREATE SEQUENCE persona_seq
+START WITH 1
+INCREMENT BY 1;
+
+-- Sequence for cliente
+CREATE SEQUENCE cliente_seq
+START WITH 1
+INCREMENT BY 1;
+
+-- Sequence for proveedor
+CREATE SEQUENCE proveedor_seq
+START WITH 1
+INCREMENT BY 1;
+
+-- Sequence for empleado
+CREATE SEQUENCE empleado_seq
+START WITH 1
+INCREMENT BY 1;
+
+-- Sequence for factura
+CREATE SEQUENCE factura_seq
+START WITH 1
+INCREMENT BY 1;
+
+-- Sequence for detallefactura
+CREATE SEQUENCE detallefactura_seq
+START WITH 1
+INCREMENT BY 1;
+
+-- Sequence for estadofactura
+CREATE SEQUENCE estadofactura_seq
+START WITH 1
+INCREMENT BY 1;
+
+-- Sequence for inventario
+CREATE SEQUENCE inventario_seq
+START WITH 1
+INCREMENT BY 1;
+
+-- Sequence for medicamento
+CREATE SEQUENCE medicamento_seq
+START WITH 1
+INCREMENT BY 1;
+
+-- Sequence for metododepago
+CREATE SEQUENCE metododepago_seq
+START WITH 1
+INCREMENT BY 1;
+
+-- Sequence for usuario
+CREATE SEQUENCE usuario_seq
+START WITH 1
+INCREMENT BY 1;
+
+-- Sequence for tipodevolucion
+CREATE SEQUENCE tipodevolucion_seq
+START WITH 1
+INCREMENT BY 1;
+
+-- Sequence for laboratorio
+CREATE SEQUENCE laboratorio_seq
+START WITH 1
+INCREMENT BY 1;
+
+-- Sequence for sucursal
+CREATE SEQUENCE sucursal_seq
+START WITH 1
+INCREMENT BY 1;
+
+-- Sequence for metodopago
+CREATE SEQUENCE metodopago_seq
+START WITH 1
+INCREMENT BY 1;
+
+-- Sequence for estadoempleado
+CREATE SEQUENCE estadoempleado_seq
+START WITH 1
+INCREMENT BY 1;
+
+-- Sequence for estadogarantia
+CREATE SEQUENCE estadogarantia_seq
+START WITH 1
+INCREMENT BY 1;
+
+-- Sequence for producto
+CREATE SEQUENCE producto_seq
+START WITH 1
+INCREMENT BY 1;
+
+CREATE OR REPLACE TRIGGER auditar_persona
+AFTER INSERT OR UPDATE OR DELETE ON persona
+FOR EACH ROW
+DECLARE
+    v_tipomovimiento VARCHAR2(40);
+BEGIN
+    -- Determine the type of movement
+    IF INSERTING THEN
+        v_tipomovimiento := 'Creaci�n';
+    ELSIF UPDATING THEN
+        v_tipomovimiento := 'Edici�n';
+    ELSIF DELETING THEN
+        v_tipomovimiento := 'Eliminaci�n';
+    END IF;
+
+    -- Register the operation in the bitacora table
+    INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+    VALUES (bitacora_seq.NEXTVAL, 'persona', 'codigopersona', :old.codigopersona, NULL, NULL, SYSDATE, v_tipomovimiento);
+END;
+/
+
+CREATE OR REPLACE TRIGGER auditar_cliente
+AFTER INSERT OR UPDATE OR DELETE ON cliente
+FOR EACH ROW
+DECLARE
+    v_tipomovimiento VARCHAR2(40);
+BEGIN
+    -- Determine the type of movement
+    IF INSERTING THEN
+        v_tipomovimiento := 'Creaci�n';
+    ELSIF UPDATING THEN
+        v_tipomovimiento := 'Edici�n';
+    ELSIF DELETING THEN
+        v_tipomovimiento := 'Eliminaci�n';
+    END IF;
+
+    -- Register the operation in the bitacora table
+    INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+    VALUES (bitacora_seq.NEXTVAL, 'cliente', 'codigocliente', :old.codigocliente, NULL, NULL, SYSDATE, v_tipomovimiento);
+END;
+/
+CREATE OR REPLACE TRIGGER auditar_proveedor
+AFTER INSERT OR UPDATE OR DELETE ON proveedor
+FOR EACH ROW
+DECLARE
+    v_tipomovimiento VARCHAR2(40);
+BEGIN
+    -- Determine the type of movement
+    IF INSERTING THEN
+        v_tipomovimiento := 'Creaci�n';
+    ELSIF UPDATING THEN
+        v_tipomovimiento := 'Edici�n';
+    ELSIF DELETING THEN
+        v_tipomovimiento := 'Eliminaci�n';
+    END IF;
+
+    -- Register the operation in the bitacora table
+    INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+    VALUES (bitacora_seq.NEXTVAL, 'proveedor', 'codigoproveedor', :old.codigoproveedor, NULL, NULL, SYSDATE, v_tipomovimiento);
+END;
+/
+
+CREATE OR REPLACE TRIGGER auditar_empleado
+AFTER INSERT OR UPDATE OR DELETE ON empleado
+FOR EACH ROW
+DECLARE
+    v_tipomovimiento VARCHAR2(40);
+BEGIN
+    -- Determine the type of movement
+    IF INSERTING THEN
+        v_tipomovimiento := 'Creaci�n';
+    ELSIF UPDATING THEN
+        v_tipomovimiento := 'Edici�n';
+    ELSIF DELETING THEN
+        v_tipomovimiento := 'Eliminaci�n';
+    END IF;
+
+    -- Register the operation in the bitacora table
+    INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+    VALUES (bitacora_seq.NEXTVAL, 'empleado', 'codigoempleado', :old.codigoempleado, NULL, NULL, SYSDATE, v_tipomovimiento);
+END;
+/
+
+CREATE OR REPLACE TRIGGER auditar_factura
+AFTER INSERT OR UPDATE OR DELETE ON factura
+FOR EACH ROW
+DECLARE
+    v_tipomovimiento VARCHAR2(40);
+BEGIN
+    -- Determine the type of movement
+    IF INSERTING THEN
+        v_tipomovimiento := 'Creaci�n';
+    ELSIF UPDATING THEN
+        v_tipomovimiento := 'Edici�n';
+    ELSIF DELETING THEN
+        v_tipomovimiento := 'Eliminaci�n';
+    END IF;
+
+    -- Register the operation in the bitacora table
+    INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+    VALUES (bitacora_seq.NEXTVAL, 'factura', 'codigofactura', :old.codigofactura, NULL, NULL, SYSDATE, v_tipomovimiento);
+END;
+/
+
+CREATE OR REPLACE TRIGGER auditar_detallefactura
+AFTER INSERT OR UPDATE OR DELETE ON detallefactura
+FOR EACH ROW
+DECLARE
+    v_tipomovimiento VARCHAR2(40);
+BEGIN
+    -- Determine the type of movement
+    IF INSERTING THEN
+        v_tipomovimiento := 'Creaci�n';
+    ELSIF UPDATING THEN
+        v_tipomovimiento := 'Edici�n';
+    ELSIF DELETING THEN
+        v_tipomovimiento := 'Eliminaci�n';
+    END IF;
+
+    -- Register the operation in the bitacora table
+    INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+    VALUES (bitacora_seq.NEXTVAL, 'detallefactura', 'codigodetalle', :old.codigodetalle, NULL, NULL, SYSDATE, v_tipomovimiento);
+END;
+/
+
+CREATE OR REPLACE TRIGGER auditar_estadofactura
+AFTER INSERT OR UPDATE OR DELETE ON estadofactura
+FOR EACH ROW
+DECLARE
+    v_tipomovimiento VARCHAR2(40);
+BEGIN
+    -- Determine the type of movement
+    IF INSERTING THEN
+        v_tipomovimiento := 'Creaci�n';
+    ELSIF UPDATING THEN
+        v_tipomovimiento := 'Edici�n';
+    ELSIF DELETING THEN
+        v_tipomovimiento := 'Eliminaci�n';
+    END IF;
+
+    -- Register the operation in the bitacora table
+    INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+    VALUES (bitacora_seq.NEXTVAL, 'estadofactura', 'idestadofactura', :old.idestadofactura, NULL, NULL, SYSDATE, v_tipomovimiento);
+END;
+/
+
+CREATE OR REPLACE TRIGGER auditar_inventario
+AFTER INSERT OR UPDATE OR DELETE ON inventario
+FOR EACH ROW
+DECLARE
+    v_tipomovimiento VARCHAR2(40);
+BEGIN
+    -- Determine the type of movement
+    IF INSERTING THEN
+        v_tipomovimiento := 'Creaci�n';
+    ELSIF UPDATING THEN
+        v_tipomovimiento := 'Edici�n';
+    ELSIF DELETING THEN
+        v_tipomovimiento := 'Eliminaci�n';
+    END IF;
+
+    -- Register the operation in the bitacora table
+    INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+    VALUES (bitacora_seq.NEXTVAL, 'inventario', 'codigoinventario', :old.codigoinventario, NULL, NULL, SYSDATE, v_tipomovimiento);
+END;
+/
+
+CREATE OR REPLACE TRIGGER auditar_medicamento
+AFTER INSERT OR UPDATE OR DELETE ON medicamento
+FOR EACH ROW
+DECLARE
+    v_tipomovimiento VARCHAR2(40);
+BEGIN
+    -- Determine the type of movement
+    IF INSERTING THEN
+        v_tipomovimiento := 'Creaci�n';
+    ELSIF UPDATING THEN
+        v_tipomovimiento := 'Edici�n';
+    ELSIF DELETING THEN
+        v_tipomovimiento := 'Eliminaci�n';
+    END IF;
+
+    -- Register the operation in the bitacora table
+    INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+    VALUES (bitacora_seq.NEXTVAL, 'medicamento', 'codigomedicamento', :old.codigomedicamento, NULL, NULL, SYSDATE, v_tipomovimiento);
+END;
+/
+CREATE OR REPLACE TRIGGER auditar_metododepago
+AFTER INSERT OR UPDATE OR DELETE ON metododepago
+FOR EACH ROW
+DECLARE
+    v_tipomovimiento VARCHAR2(40);
+BEGIN
+    -- Determine the type of movement
+    IF INSERTING THEN
+        v_tipomovimiento := 'Creaci�n';
+    ELSIF UPDATING THEN
+        v_tipomovimiento := 'Edici�n';
+    ELSIF DELETING THEN
+        v_tipomovimiento := 'Eliminaci�n';
+    END IF;
+
+    -- Register the operation in the bitacora table
+    INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+    VALUES (bitacora_seq.NEXTVAL, 'metododepago', 'codigometodo', :old.codigometodo, NULL, NULL, SYSDATE, v_tipomovimiento);
+END;
+/
+CREATE OR REPLACE TRIGGER auditar_usuario
+AFTER INSERT OR UPDATE OR DELETE ON usuario
+FOR EACH ROW
+DECLARE
+    v_tipomovimiento VARCHAR2(40);
+BEGIN
+    -- Determine the type of movement
+    IF INSERTING THEN
+        v_tipomovimiento := 'Creaci�n';
+    ELSIF UPDATING THEN
+        v_tipomovimiento := 'Edici�n';
+    ELSIF DELETING THEN
+        v_tipomovimiento := 'Eliminaci�n';
+    END IF;
+
+    -- Register the operation in the bitacora table
+    INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+    VALUES (bitacora_seq.NEXTVAL, 'usuario', 'idusuario', :old.idusuario, NULL, NULL, SYSDATE, v_tipomovimiento);
+END;
+/
+
+-- Trigger for the tipodevolucion table
+CREATE OR REPLACE TRIGGER auditar_tipodevolucion
+AFTER INSERT OR UPDATE OR DELETE ON tipodevolucion
+FOR EACH ROW
+DECLARE
+    v_tipomovimiento VARCHAR2(40);
+BEGIN
+    -- Determine the type of movement
+    IF INSERTING THEN
+        v_tipomovimiento := 'Creaci�n';
+    ELSIF UPDATING THEN
+        v_tipomovimiento := 'Edici�n';
+    ELSIF DELETING THEN
+        v_tipomovimiento := 'Eliminaci�n';
+    END IF;
+
+    -- Register the operation in the bitacora table
+    INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+    VALUES (bitacora_seq.NEXTVAL, 'tipodevolucion', 'idtipodevolucion', :old.idtipodevolucion, NULL, NULL, SYSDATE, v_tipomovimiento);
+END;
+/
+
+-- Trigger for the laboratorio table
+CREATE OR REPLACE TRIGGER auditar_laboratorio
+AFTER INSERT OR UPDATE OR DELETE ON laboratorio
+FOR EACH ROW
+DECLARE
+    v_tipomovimiento VARCHAR2(40);
+BEGIN
+    -- Determine the type of movement
+    IF INSERTING THEN
+        v_tipomovimiento := 'Creaci�n';
+    ELSIF UPDATING THEN
+        v_tipomovimiento := 'Edici�n';
+    ELSIF DELETING THEN
+        v_tipomovimiento := 'Eliminaci�n';
+    END IF;
+
+    -- Register the operation in the bitacora table
+    INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+    VALUES (bitacora_seq.NEXTVAL, 'laboratorio', 'codigolaboratorio', :old.codigolaboratorio, NULL, NULL, SYSDATE, v_tipomovimiento);
+END;
+/
+
+
+-- Trigger for the sucursal table
+CREATE OR REPLACE TRIGGER auditar_sucursal
+AFTER INSERT OR UPDATE OR DELETE ON sucursal
+FOR EACH ROW
+DECLARE
+    v_tipomovimiento VARCHAR2(40);
+BEGIN
+    -- Determine the type of movement
+    IF INSERTING THEN
+        v_tipomovimiento := 'Creaci�n';
+    ELSIF UPDATING THEN
+        v_tipomovimiento := 'Edici�n';
+    ELSIF DELETING THEN
+        v_tipomovimiento := 'Eliminaci�n';
+    END IF;
+
+    -- Register the operation in the bitacora table
+    INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+    VALUES (bitacora_seq.NEXTVAL, 'sucursal', 'codigosucursal', :old.codigosucursal, NULL, NULL, SYSDATE, v_tipomovimiento);
+END;
+/
+
+-- Trigger for the metodopago table
+CREATE OR REPLACE TRIGGER auditar_metodopago
+AFTER INSERT OR UPDATE OR DELETE ON metodopago
+FOR EACH ROW
+DECLARE
+    v_tipomovimiento VARCHAR2(40);
+BEGIN
+    -- Determine the type of movement
+    IF INSERTING THEN
+        v_tipomovimiento := 'Creaci�n';
+    ELSIF UPDATING THEN
+        v_tipomovimiento := 'Edici�n';
+    ELSIF DELETING THEN
+        v_tipomovimiento := 'Eliminaci�n';
+    END IF;
+
+    -- Register the operation in the bitacora table
+    INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+    VALUES (bitacora_seq.NEXTVAL, 'metodopago', 'codigometodo', :old.codigometodo, NULL, NULL, SYSDATE, v_tipomovimiento);
+END;
+/
+
+CREATE OR REPLACE TRIGGER auditar_estadoempleado
+AFTER INSERT OR UPDATE OR DELETE ON estadoempleado
+FOR EACH ROW
+DECLARE
+    v_tipomovimiento VARCHAR2(40);
+BEGIN
+    -- Determine the type of movement
+    IF INSERTING THEN
+        v_tipomovimiento := 'Creaci�n';
+    ELSIF UPDATING THEN
+        v_tipomovimiento := 'Edici�n';
+    ELSIF DELETING THEN
+        v_tipomovimiento := 'Eliminaci�n';
+    END IF;
+
+    -- Register the operation in the bitacora table
+    INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+    VALUES (bitacora_seq.NEXTVAL, 'estadoempleado', 'idestadoempleado', :old.idestadoempleado, NULL, NULL, SYSDATE, v_tipomovimiento);
+END;
+/
+
+CREATE OR REPLACE TRIGGER auditar_estadogarantia
+AFTER INSERT OR UPDATE OR DELETE ON estadogarantia
+FOR EACH ROW
+DECLARE
+    v_tipomovimiento VARCHAR2(40);
+BEGIN
+    -- Determine the type of movement
+    IF INSERTING THEN
+        v_tipomovimiento := 'Creaci�n';
+    ELSIF UPDATING THEN
+        v_tipomovimiento := 'Edici�n';
+    ELSIF DELETING THEN
+        v_tipomovimiento := 'Eliminaci�n';
+    END IF;
+
+    -- Register the operation in the bitacora table
+    INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+    VALUES (bitacora_seq.NEXTVAL, 'estadogarantia', 'codigogarantia', :old.codigogarantia, NULL, NULL, SYSDATE, v_tipomovimiento);
+END;
+/
+
+CREATE OR REPLACE TRIGGER auditar_producto
+AFTER INSERT OR UPDATE OR DELETE ON producto
+FOR EACH ROW
+DECLARE
+    v_tipomovimiento VARCHAR2(40);
+BEGIN
+    -- Determine the type of movement
+    IF INSERTING THEN
+        v_tipomovimiento := 'Creaci�n';
+    ELSIF UPDATING THEN
+        v_tipomovimiento := 'Edici�n';
+    ELSIF DELETING THEN
+        v_tipomovimiento := 'Eliminaci�n';
+    END IF;
+
+    -- Register the operation in the bitacora table
+    INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+    VALUES (bitacora_seq.NEXTVAL, 'producto', 'codigoproducto', :old.codigoproducto, NULL, NULL, SYSDATE, v_tipomovimiento);
+END;
+/
+CREATE OR REPLACE TRIGGER auditar_proveedor
+AFTER INSERT OR UPDATE OR DELETE ON proveedor
+FOR EACH ROW
+DECLARE
+    v_tipomovimiento VARCHAR2(40);
+BEGIN
+    -- Determine the type of movement
+    IF INSERTING THEN
+        v_tipomovimiento := 'Creaci�n';
+    ELSIF UPDATING THEN
+        v_tipomovimiento := 'Edici�n';
+    ELSIF DELETING THEN
+        v_tipomovimiento := 'Eliminaci�n';
+    END IF;
+
+    -- Register the operation in the bitacora table
+    INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+    VALUES (bitacora_seq.NEXTVAL, 'proveedor', 'codigoproveedor', :old.codigoproveedor, NULL, NULL, SYSDATE, v_tipomovimiento);
+END;
+/
+
+
+-- Trigger for the cliente table
+CREATE OR REPLACE TRIGGER auditar_cliente
+AFTER INSERT OR UPDATE OR DELETE ON cliente
+FOR EACH ROW
+DECLARE
+    v_tipomovimiento VARCHAR2(40);
+BEGIN
+    -- Determine the type of movement
+    IF INSERTING THEN
+        v_tipomovimiento := 'Creaci�n';
+    ELSIF UPDATING THEN
+        v_tipomovimiento := 'Edici�n';
+    ELSIF DELETING THEN
+        v_tipomovimiento := 'Eliminaci�n';
+    END IF;
+
+    -- Register the operation in the bitacora table
+    INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+    VALUES (bitacora_seq.NEXTVAL, 'cliente', 'codigocliente', :old.codigocliente, NULL, NULL, SYSDATE, v_tipomovimiento);
+
+    -- Capture the changes in the related persona record
+    IF v_tipomovimiento = 'Creaci�n' OR v_tipomovimiento = 'Edici�n' THEN
+        INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+        VALUES (bitacora_seq.NEXTVAL, 'persona', 'codigopersona', :old.codigopersona, NULL, NULL, SYSDATE, v_tipomovimiento);
+    END IF;
+END;
+/
+
+-- Trigger for the empleado table
+CREATE OR REPLACE TRIGGER auditar_empleado
+AFTER INSERT OR UPDATE OR DELETE ON empleado
+FOR EACH ROW
+DECLARE
+    v_tipomovimiento VARCHAR2(40);
+BEGIN
+    -- Determine the type of movement
+    IF INSERTING THEN
+        v_tipomovimiento := 'Creaci�n';
+    ELSIF UPDATING THEN
+        v_tipomovimiento := 'Edici�n';
+    ELSIF DELETING THEN
+        v_tipomovimiento := 'Eliminaci�n';
+    END IF;
+
+    -- Register the operation in the bitacora table for empleado
+    INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+    VALUES (bitacora_seq.NEXTVAL, 'empleado', 'codigoempleado', :old.codigoempleado, NULL, NULL, SYSDATE, v_tipomovimiento);
+
+    -- Capture the changes in the related persona record
+    IF v_tipomovimiento = 'Creaci�n' OR v_tipomovimiento = 'Edici�n' THEN
+        INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+        VALUES (bitacora_seq.NEXTVAL, 'persona', 'codigopersona', :old.codigopersona, NULL, NULL, SYSDATE, v_tipomovimiento);
+    END IF;
+
+    -- Capture the changes in the related estadoempleado record
+    IF v_tipomovimiento = 'Creaci�n' OR v_tipomovimiento = 'Edici�n' THEN
+        INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+        VALUES (bitacora_seq.NEXTVAL, 'estadoempleado', 'idestadoempleado', :old.idestadoempleado, NULL, NULL, SYSDATE, v_tipomovimiento);
+    END IF;
+
+    -- Capture the changes in the related factura record
+    IF v_tipomovimiento = 'Creaci�n' OR v_tipomovimiento = 'Edici�n' THEN
+        INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+        VALUES (bitacora_seq.NEXTVAL, 'factura', 'codigofactura', :old.codigofactura, NULL, NULL, SYSDATE, v_tipomovimiento);
+    END IF;
+END;
+/
+
+
+-- Trigger for the factura table
+CREATE OR REPLACE TRIGGER auditar_factura
+AFTER INSERT OR UPDATE OR DELETE ON factura
+FOR EACH ROW
+DECLARE
+    v_tipomovimiento VARCHAR2(40);
+BEGIN
+    -- Determine the type of movement
+    IF INSERTING THEN
+        v_tipomovimiento := 'Creaci�n';
+    ELSIF UPDATING THEN
+        v_tipomovimiento := 'Edici�n';
+    ELSIF DELETING THEN
+        v_tipomovimiento := 'Eliminaci�n';
+    END IF;
+
+    -- Register the operation in the bitacora table for factura
+    INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+    VALUES (bitacora_seq.NEXTVAL, 'factura', 'codigofactura', :old.codigofactura, NULL, NULL, SYSDATE, v_tipomovimiento);
+
+    -- Capture the changes in the related detallefactura records (if any)
+    IF v_tipomovimiento = 'Creaci�n' OR v_tipomovimiento = 'Edici�n' THEN
+        FOR df IN (SELECT * FROM detallefactura WHERE comprobante = :old.codigofactura) LOOP
+            INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+            VALUES (bitacora_seq.NEXTVAL, 'detallefactura', 'codigodetalle', df.codigodetalle, NULL, NULL, SYSDATE, v_tipomovimiento);
+        END LOOP;
+    END IF;
+END;
+/
+
+-- Trigger for the detallefactura table
+CREATE OR REPLACE TRIGGER auditar_detallefactura
+AFTER INSERT OR UPDATE OR DELETE ON detallefactura
+FOR EACH ROW
+DECLARE
+    v_tipomovimiento VARCHAR2(40);
+BEGIN
+    -- Determine the type of movement
+    IF INSERTING THEN
+        v_tipomovimiento := 'Creaci�n';
+    ELSIF UPDATING THEN
+        v_tipomovimiento := 'Edici�n';
+    ELSIF DELETING THEN
+        v_tipomovimiento := 'Eliminaci�n';
+    END IF;
+
+    -- Register the operation in the bitacora table for detallefactura
+    INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+    VALUES (bitacora_seq.NEXTVAL, 'detallefactura', 'codigodetalle', :old.codigodetalle, NULL, NULL, SYSDATE, v_tipomovimiento);
+
+    -- Capture the changes in the related factura record (many-to-one relationship)
+    IF v_tipomovimiento = 'Creaci�n' OR v_tipomovimiento = 'Edici�n' THEN
+        INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+        VALUES (bitacora_seq.NEXTVAL, 'factura', 'codigofactura', :old.comprobante, NULL, NULL, SYSDATE, v_tipomovimiento);
+    END IF;
+END;
+/
+
+-- Trigger for the factura_metodopago table
+CREATE OR REPLACE TRIGGER auditar_factura_metodopago
+AFTER INSERT OR DELETE ON factura_metodopago
+FOR EACH ROW
+DECLARE
+    v_tipomovimiento VARCHAR2(40);
+BEGIN
+    -- Determine the type of movement
+    IF INSERTING THEN
+        v_tipomovimiento := 'Creaci�n';
+    ELSIF DELETING THEN
+        v_tipomovimiento := 'Eliminaci�n';
+    END IF;
+
+    -- Register the operation in the bitacora table for factura_metodopago
+    INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+    VALUES (bitacora_seq.NEXTVAL, 'factura_metodopago', 'codigofactura, codigometodo', :old.codigofactura || ', ' || :old.codigometodo, NULL, NULL, SYSDATE, v_tipomovimiento);
+END;
+/
+-- Trigger for the tracking table
+CREATE OR REPLACE TRIGGER auditar_tracking
+AFTER INSERT OR UPDATE OR DELETE ON tracking
+FOR EACH ROW
+DECLARE
+    v_tipomovimiento VARCHAR2(40);
+BEGIN
+    -- Determine the type of movement
+    IF INSERTING THEN
+        v_tipomovimiento := 'Creaci�n';
+    ELSIF UPDATING THEN
+        v_tipomovimiento := 'Edici�n';
+    ELSIF DELETING THEN
+        v_tipomovimiento := 'Eliminaci�n';
+    END IF;
+
+    -- Register the operation in the bitacora table for tracking
+    INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+    VALUES (bitacora_seq.NEXTVAL, 'tracking', 'codigotracking', :old.codigotracking, NULL, NULL, SYSDATE, v_tipomovimiento);
+END;
+/
+-- Trigger for the devoluciones table
+CREATE OR REPLACE TRIGGER auditar_devoluciones
+AFTER INSERT OR UPDATE OR DELETE ON devoluciones
+FOR EACH ROW
+DECLARE
+    v_tipomovimiento VARCHAR2(40);
+BEGIN
+    -- Determine the type of movement
+    IF INSERTING THEN
+        v_tipomovimiento := 'Creaci�n';
+    ELSIF UPDATING THEN
+        v_tipomovimiento := 'Edici�n';
+    ELSIF DELETING THEN
+        v_tipomovimiento := 'Eliminaci�n';
+    END IF;
+
+    -- Register the operation in the bitacora table for devoluciones
+    INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+    VALUES (bitacora_seq.NEXTVAL, 'devoluciones', 'codigodevolucion', :old.codigodevolucion, NULL, NULL, SYSDATE, v_tipomovimiento);
+END;
+/
+
+-- Trigger for the inventario table
+CREATE OR REPLACE TRIGGER auditar_inventario
+AFTER INSERT OR UPDATE OR DELETE ON inventario
+FOR EACH ROW
+DECLARE
+    v_tipomovimiento VARCHAR2(40);
+BEGIN
+    -- Determine the type of movement
+    IF INSERTING THEN
+        v_tipomovimiento := 'Creaci�n';
+    ELSIF UPDATING THEN
+        v_tipomovimiento := 'Edici�n';
+    ELSIF DELETING THEN
+        v_tipomovimiento := 'Eliminaci�n';
+    END IF;
+
+    -- Register the operation in the bitacora table for inventario
+    INSERT INTO bitacora (idbitacora, tabla, campo, llaveprimaria, valoranterior, valornuevo, fechacreacion, tipomovimiento)
+    VALUES (bitacora_seq.NEXTVAL, 'inventario', 'codigoinventario', :old.codigoinventario, NULL, NULL, SYSDATE, v_tipomovimiento);
+END;
+/
+
+
+CREATE VIEW sales_summary AS
+SELECT f.codigofactura, f.fechaemicion, SUM(df.subtotal) AS total_sales, SUM(f.descuento) AS total_discount
+FROM factura f
+JOIN detallefactura df ON f.codigofactura = df.comprobante
+GROUP BY f.codigofactura, f.fechaemicion;
+
+CREATE VIEW medication_expiry AS
+SELECT codigomedicamento, lote, nombrecomercial, fechavencimiento
+FROM medicamento
+WHERE fechavencimiento BETWEEN SYSDATE AND SYSDATE + 90;
+--INGRESAR ESTE ADMIN PARA EL LOGIN EN LA PAGINA 
+insert into usuario(idusuario, nombreusuario, password, rol)
+values (1, 'admin','admin','administrador');
+
+-- Crear el rol de Administrador
+CREATE ROLE administrador;
+
+-- Crear el rol de Empleado
+CREATE ROLE usuario;
